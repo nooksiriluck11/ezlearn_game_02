@@ -1,0 +1,10 @@
+{
+  "name": "ezlearn-game-02",
+  "compatibility_date": "2026-08-12",
+  "build": {
+    "command": "npm run build"
+  },
+  "assets": {
+    "directory": "./dist"
+  }
+}

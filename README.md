@@ -62,8 +62,6 @@ src/
 
 ## Deploy
 
-build แล้วอัปโฟลเดอร์ `dist/` ขึ้น Cloudflare Pages
+ต่อ repo นี้กับ Cloudflare Workers Builds ไว้ — push ขึ้น `main` แล้ว deploy เองอัตโนมัติ
 
-```bash
-npm run build
-```
+`wrangler.jsonc` เป็นตัวคุมทั้งหมด: สั่ง `npm run build` เองก่อน แล้วเสิร์ฟไฟล์ใน `dist/` เป็น static assets จึงไม่ต้องตั้ง build command ในหน้า dashboard
