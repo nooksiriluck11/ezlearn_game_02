@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { boardHeight, cardSize, slotPositions } from '../game/layout';
+import { boardHeight, cardFontSizes, cardSize, slotPositions } from '../game/layout';
+import { POS_LABEL } from '../data/phrases';
 import { Card, Phase } from '../game/useGame';
 import { CardMark, WordCard } from './WordCard';
 
@@ -13,6 +14,8 @@ type Props = {
   revealed: string[];
   correctFlags: boolean[] | null;
   boardWidth: number;
+  showThai: boolean;
+  showPos: boolean;
   onCardPress: (cardId: string) => void;
 };
 
@@ -25,10 +28,15 @@ export function CardBoard({
   revealed,
   correctFlags,
   boardWidth,
+  showThai,
+  showPos,
   onCardPress,
 }: Props) {
   const positions = slotPositions(slots.length, boardWidth);
   const { width, height } = cardSize(boardWidth);
+  const longestWord = Math.max(...cards.map((card) => card.word.length));
+  const longestGloss = showThai ? Math.max(...cards.map((card) => card.th.length)) : 0;
+  const sizes = cardFontSizes(width, longestWord, longestGloss);
 
   function markFor(cardId: string): CardMark {
     if (!correctFlags) return 'none';
@@ -48,7 +56,10 @@ export function CardBoard({
           <WordCard
             key={card.id}
             word={card.word}
-            slotNumber={slotIndex + 1}
+            gloss={showThai ? card.th : null}
+            pos={showPos ? POS_LABEL[card.pos] : null}
+            number={card.number}
+            sizes={sizes}
             x={positions[slotIndex].x}
             y={positions[slotIndex].y}
             width={width}

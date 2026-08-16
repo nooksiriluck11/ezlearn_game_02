@@ -6,6 +6,8 @@ export const colors = {
   surfaceHi: '#332C63',
   cardFace: '#FFF6E5',
   cardFaceText: '#2A1D4A',
+  cardFaceGloss: '#6B5B9A',
+  cardFaceTag: '#A08CD0',
   cardBack: '#3B2F8F',
   cardBackEdge: '#6C5CE7',
   accent: '#FFD166',

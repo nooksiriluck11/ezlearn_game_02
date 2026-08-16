@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { LayoutChangeEvent, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { play } from '../audio/sfx';
 import { ActionBar } from '../components/ActionBar';
 import { AnswerRow } from '../components/AnswerRow';
 import { AnswerTimer } from '../components/AnswerTimer';
 import { CardBoard } from '../components/CardBoard';
 import { Countdown } from '../components/Countdown';
+import { QuitOverlay } from '../components/QuitOverlay';
 import { ResultOverlay } from '../components/ResultOverlay';
 import { ScoreBadge } from '../components/ScoreBadge';
 import { Phase, START_HEARTS, useGame } from '../game/useGame';
@@ -29,12 +31,15 @@ function bannerFor(phase: Phase, swapCount: number): string {
 }
 
 type Props = {
+  showThai: boolean;
+  showPos: boolean;
   onGameOver: (rounds: number, score: number) => void;
 };
 
-export function GameScreen({ onGameOver }: Props) {
+export function GameScreen({ showThai, showPos, onGameOver }: Props) {
   const game = useGame();
   const [boardWidth, setBoardWidth] = useState(0);
+  const [quitting, setQuitting] = useState(false);
 
   useEffect(() => {
     game.startRun();
@@ -44,6 +49,35 @@ export function GameScreen({ onGameOver }: Props) {
   useEffect(() => {
     if (game.phase === 'gameover') onGameOver(game.round - 1, game.score);
   }, [game.phase, game.round, game.score, onGameOver]);
+
+  useEffect(() => {
+    if (game.phase === 'memorize' && game.countdown > 0) play('tick');
+  }, [game.countdown, game.phase]);
+
+  useEffect(() => {
+    if (game.phase === 'hiding') play('flip');
+    if (game.phase === 'answering') play('go');
+    if (game.phase === 'gameover') play('gameover');
+  }, [game.phase]);
+
+  // Fires on every swap: the slot order is what changes, not the phase.
+  useEffect(() => {
+    if (game.phase === 'shuffling') play('swap');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game.slots]);
+
+  // Last few seconds of the answer clock.
+  useEffect(() => {
+    if (game.phase === 'answering' && game.answerLeft > 0 && game.answerLeft <= 3) play('hurry');
+  }, [game.answerLeft, game.phase]);
+
+  useEffect(() => {
+    if (game.phase !== 'result' || !game.result) return;
+    play(game.result.passed ? 'correct' : game.result.skipped ? 'flip' : 'wrong');
+    if (!game.result.hintEarned && !game.result.boostEarned) return;
+    const id = setTimeout(() => play('reward'), 520);
+    return () => clearTimeout(id);
+  }, [game.phase, game.result]);
 
   useEffect(() => {
     if (game.phase !== 'result' || Platform.OS === 'web') return;
@@ -70,6 +104,19 @@ export function GameScreen({ onGameOver }: Props) {
       <View style={styles.glow} />
 
       <View style={styles.header}>
+        <Pressable
+          style={styles.quit}
+          onPress={() => {
+            play('tap');
+            game.holdClock();
+            setQuitting(true);
+          }}
+          accessibilityRole="button"
+          accessibilityLabel="Quit this run"
+        >
+          <Text style={styles.quitMark}>✕</Text>
+        </Pressable>
+
         <View style={styles.hearts}>
           <Text style={styles.heartsAlive}>{'♥'.repeat(game.hearts)}</Text>
           <Text style={styles.heartsLost}>{'♥'.repeat(START_HEARTS - game.hearts)}</Text>
@@ -98,7 +145,12 @@ export function GameScreen({ onGameOver }: Props) {
             revealed={game.revealed}
             correctFlags={game.result?.correctFlags ?? null}
             boardWidth={boardWidth}
-            onCardPress={game.toggleCard}
+            showThai={showThai}
+            showPos={showPos}
+            onCardPress={(cardId) => {
+              play('tap');
+              game.toggleCard(cardId);
+            }}
           />
         )}
       </View>
@@ -125,13 +177,19 @@ export function GameScreen({ onGameOver }: Props) {
                   hints={game.hints}
                   boosts={game.boosts}
                   canHint={canHint}
-                  onHint={game.useHint}
-                  onBoost={game.useBoost}
+                  onHint={() => {
+                    play('reward');
+                    game.useHint();
+                  }}
+                  onBoost={() => {
+                    play('reward');
+                    game.useBoost();
+                  }}
                   onSkip={game.skip}
                 />
               </>
             )}
-            <AnswerRow cards={game.cards} answer={game.answer} slots={game.slots} />
+            <AnswerRow cards={game.cards} answer={game.answer} />
             <Pressable
               style={[styles.submit, !ready && styles.submitOff]}
               onPress={game.submit}
@@ -142,6 +200,18 @@ export function GameScreen({ onGameOver }: Props) {
           </>
         )}
       </View>
+
+      {quitting && (
+        <QuitOverlay
+          score={game.score}
+          rounds={game.round - 1}
+          onKeepPlaying={() => {
+            setQuitting(false);
+            game.releaseClock();
+          }}
+          onQuit={() => onGameOver(game.round - 1, game.score)}
+        />
+      )}
     </View>
   );
 }
@@ -168,8 +238,26 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: spacing.xs,
   },
+  quit: {
+    width: 34,
+    height: 34,
+    borderRadius: radius.pill,
+    backgroundColor: colors.bgSoft,
+    borderWidth: 1,
+    borderColor: colors.surfaceHi,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quitMark: {
+    color: colors.textDim,
+    fontSize: font.body,
+    fontWeight: '900',
+    lineHeight: font.body + 2,
+  },
   hearts: {
     flexDirection: 'row',
+    flex: 1,
+    marginLeft: spacing.sm,
   },
   heartsAlive: {
     color: colors.bad,

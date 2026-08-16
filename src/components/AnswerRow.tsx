@@ -6,21 +6,21 @@ import { colors, font, radius, spacing } from '../theme';
 type Props = {
   cards: Card[];
   answer: string[];
-  slots: string[];
 };
 
-export function AnswerRow({ cards, answer, slots }: Props) {
+export function AnswerRow({ cards, answer }: Props) {
   return (
     <View style={styles.row}>
       {cards.map((_, index) => {
         const chosenId = answer[index];
+        const chosen = cards.find((card) => card.id === chosenId);
         return (
           <View
             key={index}
-            style={[styles.slot, { borderColor: chosenId ? colors.accent : colors.surface }]}
+            style={[styles.slot, { borderColor: chosen ? colors.accent : colors.surface }]}
           >
-            {chosenId ? (
-              <Text style={styles.word}>{`#${slots.indexOf(chosenId) + 1}`}</Text>
+            {chosen ? (
+              <Text style={styles.word}>{`#${chosen.number}`}</Text>
             ) : (
               <Text style={styles.placeholder}>{index + 1}</Text>
             )}

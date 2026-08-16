@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Entry, pickEntry } from '../data/phrases';
+import { Entry, pickEntry, Pos } from '../data/phrases';
 import { getLevelConfig, LevelConfig } from './levels';
 import { BOOST_MS, rewardsFor, SKIP_PENALTY, START_HINTS } from './rewards';
 import { applySwap, buildSwapPlan, shuffled } from './shuffle';
@@ -8,7 +8,14 @@ export { BOOST_MS, CORRECT_PER_HINT, SKIP_PENALTY, START_HINTS, STREAK_PER_BOOST
 
 export type Phase = 'memorize' | 'hiding' | 'shuffling' | 'answering' | 'result' | 'gameover';
 
-export type Card = { id: string; word: string; correctIndex: number };
+export type Card = {
+  id: string;
+  word: string;
+  th: string;
+  pos: Pos;
+  correctIndex: number;
+  number: number;
+};
 
 export type RoundResult = {
   correctFlags: boolean[];
@@ -28,8 +35,20 @@ const POINTS_PER_CARD = 20;
 const PERFECT_BONUS = 100;
 const POINTS_PER_SWAP = 50;
 
-function buildCards(entry: Entry): Card[] {
-  return entry.words.map((word, i) => ({ id: `c${i}-${word}`, word, correctIndex: i }));
+/** Numbers are stamped on the cards when they are dealt, so they travel through every swap. */
+function deal(entry: Entry): { cards: Card[]; slots: string[] } {
+  const base = entry.words.map((word, i) => ({
+    id: `c${i}-${word}`,
+    word,
+    th: entry.wordsTh[i],
+    pos: entry.wordsPos[i],
+    correctIndex: i,
+  }));
+  const slots = shuffled(base.map((c) => c.id));
+  return {
+    cards: base.map((card) => ({ ...card, number: slots.indexOf(card.id) + 1 })),
+    slots,
+  };
 }
 
 export function useGame() {
@@ -58,6 +77,7 @@ export function useGame() {
 
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const lastEntry = useRef<Entry | undefined>(undefined);
+  const heldMs = useRef<number | null>(null);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach(clearTimeout);
@@ -76,13 +96,13 @@ export function useGame() {
       const nextConfig = getLevelConfig(nextRound);
       const nextEntry = pickEntry(nextConfig.wordCount, lastEntry.current);
       lastEntry.current = nextEntry;
-      const nextCards = buildCards(nextEntry);
+      const { cards: nextCards, slots: nextSlots } = deal(nextEntry);
 
       setRound(nextRound);
       setConfig(nextConfig);
       setEntry(nextEntry);
       setCards(nextCards);
-      setSlots(shuffled(nextCards.map((c) => c.id)));
+      setSlots(nextSlots);
       setAnswer([]);
       setRevealed([]);
       setResult(null);
@@ -229,6 +249,20 @@ export function useGame() {
     setHints((h) => h - 1);
   }, [answer, cards, hints, phase, revealed]);
 
+  /** Freezes the answer clock (deadline 0 stops both the tick and the bar). */
+  const holdClock = useCallback(() => {
+    if (phase !== 'answering' || deadlineAt === 0) return;
+    heldMs.current = Math.max(0, deadlineAt - Date.now());
+    setDeadlineAt(0);
+  }, [deadlineAt, phase]);
+
+  const releaseClock = useCallback(() => {
+    const left = heldMs.current;
+    heldMs.current = null;
+    if (left === null) return;
+    setDeadlineAt(Date.now() + left);
+  }, []);
+
   const useBoost = useCallback(() => {
     if (phase !== 'answering' || boosts <= 0) return;
     setBoosts((b) => b - 1);
@@ -277,6 +311,8 @@ export function useGame() {
     skip,
     useHint,
     useBoost,
+    holdClock,
+    releaseClock,
     advance,
   };
 }

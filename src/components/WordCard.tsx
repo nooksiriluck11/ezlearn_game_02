@@ -6,6 +6,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import { CardFontSizes } from '../game/layout';
 import { SWAP_MS } from '../game/useGame';
 import { colors, font, radius } from '../theme';
 
@@ -13,7 +14,12 @@ export type CardMark = 'none' | 'correct' | 'wrong';
 
 type Props = {
   word: string;
-  slotNumber: number;
+  /** Thai gloss for this word, shown under it when the translation setting is on. */
+  gloss: string | null;
+  /** Part-of-speech label, shown above the word when that setting is on. */
+  pos: string | null;
+  number: number;
+  sizes: CardFontSizes;
   x: number;
   y: number;
   width: number;
@@ -30,7 +36,10 @@ const FLIP_MS = 500;
 
 export function WordCard({
   word,
-  slotNumber,
+  gloss,
+  pos,
+  number,
+  sizes,
   x,
   y,
   width,
@@ -84,7 +93,7 @@ export function WordCard({
         onPress={onPress}
         disabled={disabled}
         accessibilityRole="button"
-        accessibilityLabel={faceUp ? word : `card ${slotNumber}`}
+        accessibilityLabel={faceUp ? word : `card ${number}`}
       >
         <Animated.View
           style={[
@@ -95,11 +104,25 @@ export function WordCard({
             frontStyle,
           ]}
         >
-          <Text style={styles.badgeDark}>{slotNumber}</Text>
+          <Text style={styles.badgeDark}>{number}</Text>
           {hinted && <Text style={styles.hintMark}>💡</Text>}
-          <Text style={styles.word} numberOfLines={2} adjustsFontSizeToFit>
+          <Text
+            style={[styles.word, { fontSize: sizes.word }]}
+            numberOfLines={2}
+            adjustsFontSizeToFit
+          >
             {word}
           </Text>
+          {pos && <Text style={[styles.pos, { fontSize: sizes.pos }]}>{pos}</Text>}
+          {gloss && (
+            <Text
+              style={[styles.gloss, { fontSize: sizes.gloss }]}
+              numberOfLines={2}
+              adjustsFontSizeToFit
+            >
+              {gloss}
+            </Text>
+          )}
         </Animated.View>
 
         <Animated.View
@@ -110,7 +133,7 @@ export function WordCard({
             backStyle,
           ]}
         >
-          <Text style={styles.backNumber}>{slotNumber}</Text>
+          <Text style={[styles.backNumber, { fontSize: sizes.number }]}>{number}</Text>
           {ordinal !== null && (
             <Animated.View style={styles.ordinal}>
               <Text style={styles.ordinalText}>{ordinal}</Text>
@@ -151,9 +174,21 @@ const styles = StyleSheet.create({
   },
   word: {
     color: colors.cardFaceText,
-    fontSize: font.body + 3,
-    fontWeight: '700',
+    fontWeight: '800',
     textAlign: 'center',
+  },
+  pos: {
+    color: colors.cardFaceTag,
+    fontWeight: '900',
+    letterSpacing: 1,
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  gloss: {
+    color: colors.cardFaceGloss,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginTop: 3,
   },
   badgeDark: {
     position: 'absolute',
@@ -171,7 +206,6 @@ const styles = StyleSheet.create({
   },
   backNumber: {
     color: colors.text,
-    fontSize: font.heading,
     fontWeight: '800',
     opacity: 0.55,
   },

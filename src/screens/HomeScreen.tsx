@@ -1,11 +1,15 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { SettingRow } from '../components/SettingRow';
 import { Progress } from '../storage/progress';
+import { Settings } from '../storage/settings';
 import { colors, font, radius, shadow, spacing } from '../theme';
 
 type Props = {
   progress: Progress;
   lastRun: { rounds: number; score: number } | null;
+  settings: Settings;
+  onSettingsChange: (patch: Partial<Settings>) => void;
   onStart: () => void;
 };
 
@@ -15,7 +19,7 @@ const RULES = [
   { icon: '⏱', text: 'Rebuild the phrase before time runs out' },
 ];
 
-export function HomeScreen({ progress, lastRun, onStart }: Props) {
+export function HomeScreen({ progress, lastRun, settings, onSettingsChange, onStart }: Props) {
   return (
     <View style={styles.root}>
       <View style={styles.glow} />
@@ -50,6 +54,31 @@ export function HomeScreen({ progress, lastRun, onStart }: Props) {
             <Text style={styles.ruleText}>{rule.text}</Text>
           </View>
         ))}
+      </View>
+
+      <View style={styles.settings}>
+        <Text style={styles.settingsTitle}>SETTINGS</Text>
+        <SettingRow
+          icon="🇹🇭"
+          label="Thai on cards"
+          hint="แสดงคำแปลไทยใต้คำศัพท์บนการ์ด"
+          value={settings.showThai}
+          onChange={(next) => onSettingsChange({ showThai: next })}
+        />
+        <SettingRow
+          icon="🔤"
+          label="Part of speech"
+          hint="บอกชนิดของคำ NOUN VERB ADJ เหนือคำบนการ์ด"
+          value={settings.showPos}
+          onChange={(next) => onSettingsChange({ showPos: next })}
+        />
+        <SettingRow
+          icon="🔊"
+          label="Sound effects"
+          hint="เสียงนับถอยหลัง สลับการ์ด และเฉลย"
+          value={settings.sound}
+          onChange={(next) => onSettingsChange({ sound: next })}
+        />
       </View>
 
       <Pressable style={styles.button} onPress={onStart}>
@@ -129,6 +158,21 @@ const styles = StyleSheet.create({
   },
   rules: {
     gap: spacing.sm,
+  },
+  settings: {
+    backgroundColor: colors.bgSoft,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.surfaceHi,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.xs,
+  },
+  settingsTitle: {
+    color: colors.textDim,
+    fontSize: font.tiny,
+    fontWeight: '800',
+    letterSpacing: 1.2,
   },
   rule: {
     flexDirection: 'row',

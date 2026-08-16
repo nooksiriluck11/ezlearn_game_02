@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Animated, {
+  cancelAnimation,
   Easing,
   useAnimatedStyle,
   useSharedValue,
@@ -37,7 +38,10 @@ export function AnswerTimer({ left, totalMs, deadlineAt, seed }: Props) {
   // One long linear animation per deadline — smooth at 60fps, and a
   // time boost simply moves the deadline and restarts it.
   useEffect(() => {
-    if (deadlineAt === 0 || totalMs === 0) return;
+    if (deadlineAt === 0 || totalMs === 0) {
+      cancelAnimation(progress);
+      return;
+    }
     const remaining = Math.max(0, deadlineAt - Date.now());
     progress.value = remaining / totalMs;
     progress.value = withTiming(0, { duration: remaining, easing: Easing.linear });
