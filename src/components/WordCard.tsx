@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { CardFontSizes } from '../game/layout';
 import { SWAP_MS } from '../game/useGame';
-import { colors, font, radius } from '../theme';
+import { fonts,colors, font, radius} from '../theme';
 
 export type CardMark = 'none' | 'correct' | 'wrong';
 
@@ -178,19 +178,19 @@ const styles = StyleSheet.create({
   },
   word: {
     color: colors.cardFaceText,
-    fontWeight: '800',
+    fontFamily: fonts.black,
     textAlign: 'center',
   },
   pos: {
     color: colors.cardFaceTag,
-    fontWeight: '900',
+    fontFamily: fonts.black,
     letterSpacing: 1,
     textAlign: 'center',
     marginTop: 4,
   },
   gloss: {
     color: colors.cardFaceGloss,
-    fontWeight: '600',
+    fontFamily: fonts.semibold,
     textAlign: 'center',
     marginTop: 3,
   },
@@ -200,11 +200,11 @@ const styles = StyleSheet.create({
     left: 8,
     color: colors.textDim,
     fontSize: font.small,
-    fontWeight: '700',
+    fontFamily: fonts.bold,
   },
   backNumber: {
     color: colors.text,
-    fontWeight: '800',
+    fontFamily: fonts.black,
     opacity: 0.55,
   },
   ordinal: {
@@ -222,6 +222,6 @@ const styles = StyleSheet.create({
   ordinalText: {
     color: colors.accentText,
     fontSize: font.small,
-    fontWeight: '800',
+    fontFamily: fonts.black,
   },
 });

@@ -18,11 +18,11 @@ export function cardSize(boardWidth: number) {
 export type CardFontSizes = { word: number; gloss: number; pos: number; number: number };
 
 /**
- * Width of one bold character at 1em. Measured on the card font (~0.53 for the
- * widest words) and rounded up, so a slightly wider font on another platform
- * still has room instead of clipping.
+ * Width of one bold character at 1em. Measured on Prompt Black — 0.53 for a
+ * typical lowercase word, 0.61 for capitals — and rounded up so the longest
+ * word still keeps a margin instead of touching the card edge.
  */
-const CHAR_EM = 0.55;
+const CHAR_EM = 0.58;
 
 function fitting(cardWidth: number, chars: number, cap: number, floor: number): number {
   const room = cardWidth - 14;

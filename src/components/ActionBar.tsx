@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SKIP_PENALTY } from '../game/useGame';
-import { colors, font, radius, spacing } from '../theme';
+import { fonts,colors, font, radius, spacing} from '../theme';
 
 type Props = {
   hints: number;
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   label: {
     color: colors.text,
     fontSize: font.small,
-    fontWeight: '800',
+    fontFamily: fonts.black,
   },
   labelOff: {
     color: colors.textDim,
@@ -126,16 +126,16 @@ const styles = StyleSheet.create({
   countText: {
     color: colors.text,
     fontSize: font.tiny,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
   skipLabel: {
     color: colors.textDim,
     fontSize: font.small,
-    fontWeight: '800',
+    fontFamily: fonts.black,
   },
   penalty: {
     color: colors.bad,
     fontSize: font.tiny,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
 });

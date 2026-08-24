@@ -2,7 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Entry, KIND_LABEL } from '../data/phrases';
 import { RoundResult } from '../game/useGame';
-import { colors, font, radius, shadow, spacing } from '../theme';
+import { fonts,colors, font, radius, shadow, spacing} from '../theme';
 
 type Props = {
   result: RoundResult;
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: font.heading,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
   kindPill: {
     backgroundColor: colors.surface,
@@ -92,33 +92,34 @@ const styles = StyleSheet.create({
   kindText: {
     color: colors.mint,
     fontSize: font.tiny,
-    fontWeight: '900',
+    fontFamily: fonts.black,
     letterSpacing: 1.2,
   },
   question: {
     color: colors.mint,
     fontSize: font.body,
-    fontWeight: '800',
+    fontFamily: fonts.black,
     textAlign: 'center',
     marginTop: spacing.xs,
   },
   answer: {
     color: colors.text,
     fontSize: font.body + 3,
-    fontWeight: '800',
+    fontFamily: fonts.black,
     textAlign: 'center',
     marginTop: spacing.xs,
   },
   translation: {
     color: colors.textDim,
     fontSize: font.body,
+    fontFamily: fonts.regular,
     textAlign: 'center',
     lineHeight: font.body * 1.5,
   },
   points: {
     color: colors.accent,
     fontSize: font.body,
-    fontWeight: '900',
+    fontFamily: fonts.black,
     marginTop: spacing.xs,
   },
   pointsBad: {
@@ -131,11 +132,12 @@ const styles = StyleSheet.create({
   reward: {
     color: colors.mint,
     fontSize: font.small,
-    fontWeight: '800',
+    fontFamily: fonts.black,
   },
   hearts: {
     color: colors.textDim,
     fontSize: font.small,
+    fontFamily: fonts.regular,
   },
   button: {
     marginTop: spacing.sm,
@@ -148,6 +150,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.accentText,
     fontSize: font.body,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { HEART_CHOICES, MEMORIZE_CHOICES, Settings } from '../storage/settings';
-import { colors, font, spacing } from '../theme';
+import { fonts,colors, font, spacing} from '../theme';
 import { Popup } from './Popup';
 import { SettingChoice } from './SettingChoice';
 import { SettingRow } from './SettingRow';
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   group: {
     color: colors.mint,
     fontSize: font.tiny,
-    fontWeight: '900',
+    fontFamily: fonts.black,
     letterSpacing: 1.2,
     marginTop: spacing.sm,
     marginBottom: 2,

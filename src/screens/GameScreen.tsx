@@ -12,7 +12,7 @@ import { ResultOverlay } from '../components/ResultOverlay';
 import { ScoreBadge } from '../components/ScoreBadge';
 import { Phase, scoreMultiplier, useGame } from '../game/useGame';
 import { Settings } from '../storage/settings';
-import { colors, font, radius, shadow, spacing } from '../theme';
+import { fonts,colors, font, radius, shadow, spacing} from '../theme';
 
 const MAX_BOARD_WIDTH = 420;
 
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   quitMark: {
     color: colors.textDim,
     fontSize: font.body,
-    fontWeight: '900',
+    fontFamily: fonts.black,
     lineHeight: font.body + 2,
   },
   hearts: {
@@ -291,11 +291,13 @@ const styles = StyleSheet.create({
   heartsAlive: {
     color: colors.bad,
     fontSize: font.heading,
+    fontFamily: fonts.regular,
     letterSpacing: 2,
   },
   heartsLost: {
     color: colors.surface,
     fontSize: font.heading,
+    fontFamily: fonts.regular,
     letterSpacing: 2,
   },
   banner: {
@@ -305,11 +307,12 @@ const styles = StyleSheet.create({
   bannerText: {
     color: colors.text,
     fontSize: font.body,
-    fontWeight: '800',
+    fontFamily: fonts.black,
   },
   askNote: {
     color: colors.textDim,
     fontSize: font.small,
+    fontFamily: fonts.regular,
     textAlign: 'center',
     minHeight: 46,
     paddingTop: spacing.sm,
@@ -317,7 +320,7 @@ const styles = StyleSheet.create({
   bannerMeta: {
     color: colors.textDim,
     fontSize: font.tiny,
-    fontWeight: '700',
+    fontFamily: fonts.bold,
     letterSpacing: 0.8,
     textTransform: 'uppercase',
   },
@@ -349,7 +352,7 @@ const styles = StyleSheet.create({
   submitText: {
     color: colors.accentText,
     fontSize: font.body,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
   submitTextOff: {
     color: colors.textDim,

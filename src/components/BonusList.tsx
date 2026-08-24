@@ -8,7 +8,7 @@ import {
   STREAK_PER_BOOST,
   STREAK_PER_UNSHUFFLE,
 } from '../game/useGame';
-import { colors, font, spacing } from '../theme';
+import { fonts,colors, font, spacing} from '../theme';
 
 // Wording is built from the real rules, so tweaking rewards.ts updates this screen too.
 const BONUSES = [
@@ -72,21 +72,23 @@ const styles = StyleSheet.create({
   name: {
     color: colors.text,
     fontSize: font.small,
-    fontWeight: '800',
+    fontFamily: fonts.black,
   },
   does: {
     color: colors.textDim,
     fontSize: font.tiny,
+    fontFamily: fonts.regular,
   },
   how: {
     color: colors.mint,
     fontSize: font.tiny,
-    fontWeight: '800',
+    fontFamily: fonts.black,
     marginTop: 2,
   },
   note: {
     color: colors.textDim,
     fontSize: font.tiny,
+    fontFamily: fonts.regular,
     opacity: 0.8,
     marginTop: spacing.xs,
   },

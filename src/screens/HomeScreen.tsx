@@ -4,7 +4,7 @@ import { BonusModal } from '../components/BonusModal';
 import { SettingsModal } from '../components/SettingsModal';
 import { Progress } from '../storage/progress';
 import { Settings } from '../storage/settings';
-import { colors, font, radius, shadow, spacing } from '../theme';
+import { fonts,colors, font, radius, shadow, spacing} from '../theme';
 
 type Props = {
   progress: Progress;
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   bonusButtonText: {
     color: colors.mint,
     fontSize: font.small,
-    fontWeight: '800',
+    fontFamily: fonts.black,
   },
   gear: {
     width: 38,
@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
   gearMark: {
     color: colors.textDim,
     fontSize: font.body + 2,
+    fontFamily: fonts.regular,
     lineHeight: font.body + 6,
   },
   content: {
@@ -172,19 +173,20 @@ const styles = StyleSheet.create({
   kicker: {
     color: colors.mint,
     fontSize: font.small,
-    fontWeight: '800',
+    fontFamily: fonts.black,
     letterSpacing: 3,
     textTransform: 'lowercase',
   },
   title: {
     color: colors.accent,
     fontSize: font.title,
-    fontWeight: '900',
+    fontFamily: fonts.black,
     marginTop: -2,
   },
   subtitle: {
     color: colors.textDim,
     fontSize: font.body,
+    fontFamily: fonts.regular,
     textAlign: 'center',
   },
   stats: {
@@ -204,21 +206,23 @@ const styles = StyleSheet.create({
   statLabel: {
     color: colors.textDim,
     fontSize: font.tiny,
-    fontWeight: '800',
+    fontFamily: fonts.black,
     letterSpacing: 1.2,
   },
   statValue: {
     color: colors.accent,
     fontSize: font.score,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
   statUnit: {
     color: colors.textDim,
     fontSize: font.tiny,
+    fontFamily: fonts.regular,
   },
   lastRun: {
     color: colors.textDim,
     fontSize: font.small,
+    fontFamily: fonts.regular,
     textAlign: 'center',
     marginTop: -spacing.sm,
   },
@@ -233,7 +237,7 @@ const styles = StyleSheet.create({
   ruleStep: {
     color: colors.accent,
     fontSize: font.tiny,
-    fontWeight: '900',
+    fontFamily: fonts.black,
     width: 20,
     textAlign: 'center',
     opacity: 0.8,
@@ -241,6 +245,7 @@ const styles = StyleSheet.create({
   ruleText: {
     color: colors.textDim,
     fontSize: font.small,
+    fontFamily: fonts.regular,
     flex: 1,
   },
   button: {
@@ -254,11 +259,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.accentText,
     fontSize: font.heading - 4,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
   footNote: {
     color: colors.textDim,
     fontSize: font.tiny,
+    fontFamily: fonts.regular,
     textAlign: 'center',
     marginTop: -spacing.sm,
   },

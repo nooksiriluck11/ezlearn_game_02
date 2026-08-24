@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, font, radius, shadow, spacing } from '../theme';
+import { fonts,colors, font, radius, shadow, spacing} from '../theme';
 
 type Props = {
   score: number;
@@ -59,11 +59,12 @@ const styles = StyleSheet.create({
   title: {
     color: colors.text,
     fontSize: font.heading - 2,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
   body: {
     color: colors.textDim,
     fontSize: font.small,
+    fontFamily: fonts.regular,
     textAlign: 'center',
     lineHeight: font.small * 1.5,
   },
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
   stayText: {
     color: colors.accentText,
     fontSize: font.body,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
   quit: {
     alignSelf: 'stretch',
@@ -92,6 +93,6 @@ const styles = StyleSheet.create({
   quitText: {
     color: colors.bad,
     fontSize: font.body,
-    fontWeight: '800',
+    fontFamily: fonts.black,
   },
 });

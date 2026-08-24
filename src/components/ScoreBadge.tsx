@@ -6,7 +6,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { colors, font, radius, shadow, spacing } from '../theme';
+import { fonts,colors, font, radius, shadow, spacing} from '../theme';
 
 type Props = {
   score: number;
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   streakText: {
     color: colors.warn,
     fontSize: font.small,
-    fontWeight: '800',
+    fontFamily: fonts.black,
   },
   badge: {
     flexDirection: 'row',
@@ -75,17 +75,18 @@ const styles = StyleSheet.create({
   star: {
     color: colors.accent,
     fontSize: font.heading,
+    fontFamily: fonts.regular,
   },
   label: {
     color: colors.textDim,
     fontSize: font.tiny,
-    fontWeight: '800',
+    fontFamily: fonts.black,
     letterSpacing: 1.2,
   },
   value: {
     color: colors.text,
     fontSize: font.score - 6,
-    fontWeight: '900',
+    fontFamily: fonts.black,
     lineHeight: font.score,
   },
 });

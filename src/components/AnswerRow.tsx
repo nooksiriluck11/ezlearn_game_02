@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Card } from '../game/useGame';
-import { colors, font, radius, spacing } from '../theme';
+import { fonts,colors, font, radius, spacing} from '../theme';
 
 type Props = {
   cards: Card[];
@@ -53,12 +53,12 @@ const styles = StyleSheet.create({
   word: {
     color: colors.text,
     fontSize: font.body,
-    fontWeight: '700',
+    fontFamily: fonts.bold,
   },
   placeholder: {
     color: colors.textDim,
     fontSize: font.body,
-    fontWeight: '700',
+    fontFamily: fonts.bold,
     opacity: 0.5,
   },
 });

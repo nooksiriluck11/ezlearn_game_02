@@ -9,7 +9,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { colors, font, radius, spacing } from '../theme';
+import { fonts,colors, font, radius, spacing} from '../theme';
 
 const CALM = ['Beat the clock!', 'You got this!', 'Lock it in!'];
 const MID = ['Keep it up!', 'Halfway there!', 'Stay sharp!'];
@@ -86,12 +86,12 @@ const styles = StyleSheet.create({
   },
   phrase: {
     fontSize: font.small,
-    fontWeight: '900',
+    fontFamily: fonts.black,
     letterSpacing: 0.3,
   },
   seconds: {
     fontSize: font.small,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
   track: {
     height: 8,

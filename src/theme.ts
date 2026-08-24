@@ -36,6 +36,17 @@ export const radius = {
   pill: 999,
 };
 
+/**
+ * One face per weight: React Native picks a font file by family name, not by
+ * fontWeight, so each weight is its own family and styles name it directly.
+ */
+export const fonts = {
+  regular: 'Prompt_400Regular',
+  semibold: 'Prompt_600SemiBold',
+  bold: 'Prompt_700Bold',
+  black: 'Prompt_900Black',
+};
+
 export const font = {
   title: 40,
   heading: 26,
@@ -43,7 +54,7 @@ export const font = {
   small: 13,
   tiny: 11,
   countdown: 96,
-  score: 28,
+  score: 33,
 };
 
 export const shadow = {

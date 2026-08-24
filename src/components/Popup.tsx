@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { colors, font, radius, shadow, spacing } from '../theme';
+import { fonts,colors, font, radius, shadow, spacing} from '../theme';
 
 type Props = {
   title: string;
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.text,
     fontSize: font.heading - 6,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
   close: {
     width: 30,
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   closeMark: {
     color: colors.textDim,
     fontSize: font.small,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
   body: {
     flexGrow: 0,
@@ -107,6 +107,6 @@ const styles = StyleSheet.create({
   doneText: {
     color: colors.accentText,
     fontSize: font.body,
-    fontWeight: '900',
+    fontFamily: fonts.black,
   },
 });

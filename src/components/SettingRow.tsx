@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, font, radius, spacing } from '../theme';
+import { fonts,colors, font, radius, spacing} from '../theme';
 
 type Props = {
   icon: string;
@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: font.body,
+    fontFamily: fonts.regular,
     width: 24,
     textAlign: 'center',
   },
@@ -52,11 +53,12 @@ const styles = StyleSheet.create({
   label: {
     color: colors.text,
     fontSize: font.small,
-    fontWeight: '800',
+    fontFamily: fonts.black,
   },
   hint: {
     color: colors.textDim,
     fontSize: font.tiny,
+    fontFamily: fonts.regular,
   },
   track: {
     width: TRACK_WIDTH,

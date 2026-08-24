@@ -7,7 +7,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { colors, font } from '../theme';
+import { fonts,colors, font} from '../theme';
 
 export function Countdown({ value }: { value: number }) {
   const pop = useSharedValue(1);
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   number: {
     color: colors.accent,
     fontSize: font.countdown,
-    fontWeight: '900',
+    fontFamily: fonts.black,
     lineHeight: font.countdown * 1.05,
   },
 });
