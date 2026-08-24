@@ -31,6 +31,12 @@ export function ResultOverlay({ result, entry, heartsLeft, onContinue }: Props) 
         <Text style={styles.kindText}>{KIND_LABEL[entry.kind]}</Text>
       </View>
 
+      {result.question && (
+        <Text style={styles.question}>
+          “{result.question.th}” = {result.question.word}
+        </Text>
+      )}
+
       <Text style={styles.answer}>{entry.words.join(' ')}</Text>
       <Text style={styles.translation}>{entry.th}</Text>
 
@@ -38,10 +44,11 @@ export function ResultOverlay({ result, entry, heartsLeft, onContinue }: Props) 
         {result.gained >= 0 ? `+${result.gained}` : result.gained} points
       </Text>
 
-      {(result.hintEarned || result.boostEarned) && (
+      {(result.hintEarned || result.boostEarned || result.unshuffleEarned) && (
         <View style={styles.rewards}>
-          {result.hintEarned && <Text style={styles.reward}>💡 +1 hint earned</Text>}
-          {result.boostEarned && <Text style={styles.reward}>⏱ +1 time boost earned</Text>}
+          {result.hintEarned && <Text style={styles.reward}>+1 hint earned</Text>}
+          {result.boostEarned && <Text style={styles.reward}>+1 time boost earned</Text>}
+          {result.unshuffleEarned && <Text style={styles.reward}>+1 un-shuffle earned</Text>}
         </View>
       )}
 
@@ -87,6 +94,13 @@ const styles = StyleSheet.create({
     fontSize: font.tiny,
     fontWeight: '900',
     letterSpacing: 1.2,
+  },
+  question: {
+    color: colors.mint,
+    fontSize: font.body,
+    fontWeight: '800',
+    textAlign: 'center',
+    marginTop: spacing.xs,
   },
   answer: {
     color: colors.text,

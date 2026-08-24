@@ -16,6 +16,7 @@ type Props = {
   boardWidth: number;
   showThai: boolean;
   showPos: boolean;
+  showNumbers: boolean;
   onCardPress: (cardId: string) => void;
 };
 
@@ -30,6 +31,7 @@ export function CardBoard({
   boardWidth,
   showThai,
   showPos,
+  showNumbers,
   onCardPress,
 }: Props) {
   const positions = slotPositions(slots.length, boardWidth);
@@ -58,7 +60,7 @@ export function CardBoard({
             word={card.word}
             gloss={showThai ? card.th : null}
             pos={showPos ? POS_LABEL[card.pos] : null}
-            number={card.number}
+            number={showNumbers ? card.number : null}
             sizes={sizes}
             x={positions[slotIndex].x}
             y={positions[slotIndex].y}

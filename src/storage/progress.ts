@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const KEY = '@kukkukku/progress-v2';
+const KEY = '@kukkukkoo/progress-v2';
+/** Pre-rename key — read once so existing players keep their records. */
+const LEGACY_KEY = '@kukkukku/progress-v2';
 
 export type Progress = {
   bestScore: number;
@@ -11,7 +13,7 @@ export type Progress = {
 export const EMPTY_PROGRESS: Progress = { bestScore: 0, bestRounds: 0, totalRuns: 0 };
 
 export async function loadProgress(): Promise<Progress> {
-  const raw = await AsyncStorage.getItem(KEY);
+  const raw = (await AsyncStorage.getItem(KEY)) ?? (await AsyncStorage.getItem(LEGACY_KEY));
   if (!raw) return EMPTY_PROGRESS;
   try {
     return { ...EMPTY_PROGRESS, ...JSON.parse(raw) };

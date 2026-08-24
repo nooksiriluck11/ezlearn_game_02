@@ -18,7 +18,8 @@ type Props = {
   gloss: string | null;
   /** Part-of-speech label, shown above the word when that setting is on. */
   pos: string | null;
-  number: number;
+  /** null when the player turned card numbers off. */
+  number: number | null;
   sizes: CardFontSizes;
   x: number;
   y: number;
@@ -93,7 +94,9 @@ export function WordCard({
         onPress={onPress}
         disabled={disabled}
         accessibilityRole="button"
-        accessibilityLabel={faceUp ? word : `card ${number}`}
+        accessibilityLabel={
+            faceUp ? word : number === null ? 'face down card' : `card ${number}`
+          }
       >
         <Animated.View
           style={[
@@ -104,8 +107,7 @@ export function WordCard({
             frontStyle,
           ]}
         >
-          <Text style={styles.badgeDark}>{number}</Text>
-          {hinted && <Text style={styles.hintMark}>💡</Text>}
+          {number !== null && <Text style={styles.badgeDark}>{number}</Text>}
           <Text
             style={[styles.word, { fontSize: sizes.word }]}
             numberOfLines={2}
@@ -133,7 +135,9 @@ export function WordCard({
             backStyle,
           ]}
         >
-          <Text style={[styles.backNumber, { fontSize: sizes.number }]}>{number}</Text>
+          {number !== null && (
+            <Text style={[styles.backNumber, { fontSize: sizes.number }]}>{number}</Text>
+          )}
           {ordinal !== null && (
             <Animated.View style={styles.ordinal}>
               <Text style={styles.ordinalText}>{ordinal}</Text>
@@ -197,12 +201,6 @@ const styles = StyleSheet.create({
     color: colors.textDim,
     fontSize: font.small,
     fontWeight: '700',
-  },
-  hintMark: {
-    position: 'absolute',
-    top: 4,
-    right: 6,
-    fontSize: font.small,
   },
   backNumber: {
     color: colors.text,

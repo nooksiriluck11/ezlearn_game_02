@@ -6,15 +6,29 @@ import { colors, font, radius, spacing } from '../theme';
 type Props = {
   hints: number;
   boosts: number;
+  unshuffles: number;
   canHint: boolean;
+  canUnshuffle: boolean;
   onHint: () => void;
   onBoost: () => void;
+  onUnshuffle: () => void;
   onSkip: () => void;
 };
 
-export function ActionBar({ hints, boosts, canHint, onHint, onBoost, onSkip }: Props) {
+export function ActionBar({
+  hints,
+  boosts,
+  unshuffles,
+  canHint,
+  canUnshuffle,
+  onHint,
+  onBoost,
+  onUnshuffle,
+  onSkip,
+}: Props) {
   const hintOff = hints <= 0 || !canHint;
   const boostOff = boosts <= 0;
+  const unshuffleOff = !canUnshuffle;
 
   return (
     <View style={styles.row}>
@@ -23,7 +37,7 @@ export function ActionBar({ hints, boosts, canHint, onHint, onBoost, onSkip }: P
         onPress={onHint}
         disabled={hintOff}
       >
-        <Text style={[styles.label, hintOff && styles.labelOff]}>💡 Hint</Text>
+        <Text style={[styles.label, hintOff && styles.labelOff]}>Hint</Text>
         <View style={[styles.count, hintOff && styles.countOff]}>
           <Text style={styles.countText}>{hints}</Text>
         </View>
@@ -34,14 +48,25 @@ export function ActionBar({ hints, boosts, canHint, onHint, onBoost, onSkip }: P
         onPress={onBoost}
         disabled={boostOff}
       >
-        <Text style={[styles.label, boostOff && styles.labelOff]}>⏱ +5s</Text>
+        <Text style={[styles.label, boostOff && styles.labelOff]}>+5s</Text>
         <View style={[styles.count, boostOff && styles.countOff]}>
           <Text style={styles.countText}>{boosts}</Text>
         </View>
       </Pressable>
 
+      <Pressable
+        style={[styles.chip, styles.unshuffleChip, unshuffleOff && styles.off]}
+        onPress={onUnshuffle}
+        disabled={unshuffleOff}
+      >
+        <Text style={[styles.label, unshuffleOff && styles.labelOff]}>Unshuffle</Text>
+        <View style={[styles.count, unshuffleOff && styles.countOff]}>
+          <Text style={styles.countText}>{unshuffles}</Text>
+        </View>
+      </Pressable>
+
       <Pressable style={[styles.chip, styles.skipChip]} onPress={onSkip}>
-        <Text style={styles.skipLabel}>⏭ Skip</Text>
+        <Text style={styles.skipLabel}>Skip</Text>
         <Text style={styles.penalty}>−{SKIP_PENALTY}</Text>
       </Pressable>
     </View>
@@ -51,6 +76,7 @@ export function ActionBar({ hints, boosts, canHint, onHint, onBoost, onSkip }: P
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'center',
     gap: spacing.sm,
   },
@@ -69,6 +95,9 @@ const styles = StyleSheet.create({
   },
   boostChip: {
     borderColor: colors.mint,
+  },
+  unshuffleChip: {
+    borderColor: colors.warn,
   },
   skipChip: {
     borderColor: colors.surfaceHi,

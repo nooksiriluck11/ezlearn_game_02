@@ -10,12 +10,13 @@ import { Countdown } from '../components/Countdown';
 import { QuitOverlay } from '../components/QuitOverlay';
 import { ResultOverlay } from '../components/ResultOverlay';
 import { ScoreBadge } from '../components/ScoreBadge';
-import { Phase, START_HEARTS, useGame } from '../game/useGame';
+import { Phase, scoreMultiplier, useGame } from '../game/useGame';
+import { Settings } from '../storage/settings';
 import { colors, font, radius, shadow, spacing } from '../theme';
 
 const MAX_BOARD_WIDTH = 420;
 
-function bannerFor(phase: Phase, swapCount: number): string {
+function bannerFor(phase: Phase, swapCount: number, asking: string | null): string {
   switch (phase) {
     case 'memorize':
       return 'Memorize the order';
@@ -24,20 +25,23 @@ function bannerFor(phase: Phase, swapCount: number): string {
     case 'shuffling':
       return 'Follow the cards!';
     case 'answering':
-      return 'Tap the cards in order';
+      // The question only appears once the cards are down — otherwise it gives itself away.
+      return asking ? `Which card means “${asking}”?` : 'Tap the cards in order';
     default:
       return swapCount > 0 ? `${swapCount} swap${swapCount > 1 ? 's' : ''} this round` : 'No swaps';
   }
 }
 
 type Props = {
-  showThai: boolean;
-  showPos: boolean;
+  settings: Settings;
   onGameOver: (rounds: number, score: number) => void;
 };
 
-export function GameScreen({ showThai, showPos, onGameOver }: Props) {
-  const game = useGame();
+export function GameScreen({ settings, onGameOver }: Props) {
+  const game = useGame({
+    memorizeSeconds: settings.memorizeSeconds,
+    startHearts: settings.hearts,
+  });
   const [boardWidth, setBoardWidth] = useState(0);
   const [quitting, setQuitting] = useState(false);
 
@@ -92,7 +96,10 @@ export function GameScreen({ showThai, showPos, onGameOver }: Props) {
     setBoardWidth(Math.min(e.nativeEvent.layout.width, MAX_BOARD_WIDTH));
   }
 
-  const ready = game.answer.length === game.cards.length && game.cards.length > 0;
+  const multiplier = scoreMultiplier(settings.hearts);
+  const asking = game.kind === 'meaning' ? game.target : null;
+  const needed = game.kind === 'meaning' ? 1 : game.cards.length;
+  const ready = game.answer.length === needed && game.cards.length > 0;
   const answering = game.phase === 'answering';
   const showResult = game.phase === 'result' && game.result !== null && game.entry !== null;
   const canHint = game.cards.some(
@@ -119,16 +126,21 @@ export function GameScreen({ showThai, showPos, onGameOver }: Props) {
 
         <View style={styles.hearts}>
           <Text style={styles.heartsAlive}>{'♥'.repeat(game.hearts)}</Text>
-          <Text style={styles.heartsLost}>{'♥'.repeat(START_HEARTS - game.hearts)}</Text>
+          <Text style={styles.heartsLost}>
+            {'♥'.repeat(Math.max(0, settings.hearts - game.hearts))}
+          </Text>
         </View>
         <ScoreBadge score={game.score} streak={game.streak} />
       </View>
 
       <View style={styles.banner}>
-        <Text style={styles.bannerText}>{bannerFor(game.phase, game.config.swapCount)}</Text>
+        <Text style={styles.bannerText}>
+          {bannerFor(game.phase, game.config.swapCount, asking ? asking.th : null)}
+        </Text>
         <Text style={styles.bannerMeta}>
           {game.config.wordCount} words
           {game.config.swapCount > 0 ? ` · ${game.config.swapCount} swaps` : ''}
+          {multiplier !== 1 ? ` · ×${multiplier.toFixed(2).replace(/0$/, '')} points` : ''}
         </Text>
       </View>
 
@@ -145,8 +157,9 @@ export function GameScreen({ showThai, showPos, onGameOver }: Props) {
             revealed={game.revealed}
             correctFlags={game.result?.correctFlags ?? null}
             boardWidth={boardWidth}
-            showThai={showThai}
-            showPos={showPos}
+            showThai={settings.showThai}
+            showPos={settings.showPos}
+            showNumbers={settings.showNumbers}
             onCardPress={(cardId) => {
               play('tap');
               game.toggleCard(cardId);
@@ -176,7 +189,9 @@ export function GameScreen({ showThai, showPos, onGameOver }: Props) {
                 <ActionBar
                   hints={game.hints}
                   boosts={game.boosts}
+                  unshuffles={game.unshuffles}
                   canHint={canHint}
+                  canUnshuffle={game.canUnshuffle}
                   onHint={() => {
                     play('reward');
                     game.useHint();
@@ -185,11 +200,23 @@ export function GameScreen({ showThai, showPos, onGameOver }: Props) {
                     play('reward');
                     game.useBoost();
                   }}
+                  onUnshuffle={() => {
+                    play('swap');
+                    game.useUnshuffle();
+                  }}
                   onSkip={game.skip}
                 />
               </>
             )}
-            <AnswerRow cards={game.cards} answer={game.answer} />
+            {game.kind === 'order' ? (
+              <AnswerRow
+                cards={game.cards}
+                answer={game.answer}
+                showNumbers={settings.showNumbers}
+              />
+            ) : (
+              <Text style={styles.askNote}>Pick the one card that means it</Text>
+            )}
             <Pressable
               style={[styles.submit, !ready && styles.submitOff]}
               onPress={game.submit}
@@ -219,6 +246,8 @@ export function GameScreen({ showThai, showPos, onGameOver }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    // The glow bleeds past both edges on purpose — clip it so the page never scrolls sideways.
+    overflow: 'hidden',
     paddingHorizontal: spacing.md,
     gap: spacing.sm,
   },
@@ -277,6 +306,13 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: font.body,
     fontWeight: '800',
+  },
+  askNote: {
+    color: colors.textDim,
+    fontSize: font.small,
+    textAlign: 'center',
+    minHeight: 46,
+    paddingTop: spacing.sm,
   },
   bannerMeta: {
     color: colors.textDim,

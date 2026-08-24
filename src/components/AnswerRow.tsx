@@ -6,9 +6,10 @@ import { colors, font, radius, spacing } from '../theme';
 type Props = {
   cards: Card[];
   answer: string[];
+  showNumbers: boolean;
 };
 
-export function AnswerRow({ cards, answer }: Props) {
+export function AnswerRow({ cards, answer, showNumbers }: Props) {
   return (
     <View style={styles.row}>
       {cards.map((_, index) => {
@@ -20,7 +21,7 @@ export function AnswerRow({ cards, answer }: Props) {
             style={[styles.slot, { borderColor: chosen ? colors.accent : colors.surface }]}
           >
             {chosen ? (
-              <Text style={styles.word}>{`#${chosen.number}`}</Text>
+              <Text style={styles.word}>{showNumbers ? `#${chosen.number}` : '●'}</Text>
             ) : (
               <Text style={styles.placeholder}>{index + 1}</Text>
             )}

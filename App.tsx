@@ -64,11 +64,7 @@ export default function App() {
           onStart={() => setScreen('game')}
         />
       ) : (
-        <GameScreen
-          showThai={settings.showThai}
-          showPos={settings.showPos}
-          onGameOver={onGameOver}
-        />
+        <GameScreen settings={settings} onGameOver={onGameOver} />
       )}
     </SafeAreaView>
   );
