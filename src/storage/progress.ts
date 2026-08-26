@@ -1,8 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const KEY = '@kukkukkoo/progress-v2';
-/** Pre-rename key — read once so existing players keep their records. */
-const LEGACY_KEY = '@kukkukku/progress-v2';
+const KEY = 'kukkukkoo/progress-v2';
+/** Keys the Expo build wrote through AsyncStorage — read once so records survive the port. */
+const LEGACY_KEYS = ['@kukkukkoo/progress-v2', '@kukkukku/progress-v2'];
 
 export type Progress = {
   bestScore: number;
@@ -12,8 +10,20 @@ export type Progress = {
 
 export const EMPTY_PROGRESS: Progress = { bestScore: 0, bestRounds: 0, totalRuns: 0 };
 
-export async function loadProgress(): Promise<Progress> {
-  const raw = (await AsyncStorage.getItem(KEY)) ?? (await AsyncStorage.getItem(LEGACY_KEY));
+function read(): string | null {
+  try {
+    for (const key of [KEY, ...LEGACY_KEYS]) {
+      const raw = localStorage.getItem(key);
+      if (raw) return raw;
+    }
+  } catch {
+    // Private-mode Safari throws on localStorage — a run without records still plays.
+  }
+  return null;
+}
+
+export function loadProgress(): Progress {
+  const raw = read();
   if (!raw) return EMPTY_PROGRESS;
   try {
     return { ...EMPTY_PROGRESS, ...JSON.parse(raw) };
@@ -22,6 +32,10 @@ export async function loadProgress(): Promise<Progress> {
   }
 }
 
-export async function saveProgress(progress: Progress): Promise<void> {
-  await AsyncStorage.setItem(KEY, JSON.stringify(progress));
+export function saveProgress(progress: Progress): void {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(progress));
+  } catch {
+    // Nothing to do — the run itself is unaffected.
+  }
 }

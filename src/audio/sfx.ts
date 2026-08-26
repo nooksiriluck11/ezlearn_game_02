@@ -1,33 +1,26 @@
-import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-audio';
+import type Phaser from 'phaser';
 
-const SOURCES = {
-  tick: require('../../assets/sfx/tick.wav'),
-  hurry: require('../../assets/sfx/hurry.wav'),
-  flip: require('../../assets/sfx/flip.wav'),
-  swap: require('../../assets/sfx/swap.wav'),
-  tap: require('../../assets/sfx/tap.wav'),
-  go: require('../../assets/sfx/go.wav'),
-  correct: require('../../assets/sfx/correct.wav'),
-  wrong: require('../../assets/sfx/wrong.wav'),
-  gameover: require('../../assets/sfx/gameover.wav'),
-  reward: require('../../assets/sfx/reward.wav'),
-};
+export const SFX_KEYS = [
+  'tick',
+  'hurry',
+  'flip',
+  'swap',
+  'tap',
+  'go',
+  'correct',
+  'wrong',
+  'gameover',
+  'reward',
+] as const;
 
-export type SfxName = keyof typeof SOURCES;
+export type SfxName = (typeof SFX_KEYS)[number];
 
-let players: Record<SfxName, AudioPlayer> | null = null;
+let manager: Phaser.Sound.BaseSoundManager | null = null;
 let enabled = true;
 
-/** Players are built on the first sound so a muted run never touches the audio stack. */
-function ensurePlayers(): Record<SfxName, AudioPlayer> {
-  if (players) return players;
-  setAudioModeAsync({ playsInSilentMode: true }).catch(() => {});
-  const built = {} as Record<SfxName, AudioPlayer>;
-  (Object.keys(SOURCES) as SfxName[]).forEach((name) => {
-    built[name] = createAudioPlayer(SOURCES[name]);
-  });
-  players = built;
-  return built;
+/** BootScene hands over the game-wide sound manager once the clips are decoded. */
+export function attachSound(soundManager: Phaser.Sound.BaseSoundManager): void {
+  manager = soundManager;
 }
 
 export function setSoundEnabled(on: boolean): void {
@@ -35,13 +28,20 @@ export function setSoundEnabled(on: boolean): void {
 }
 
 export function play(name: SfxName): void {
-  if (!enabled) return;
+  if (!enabled || !manager) return;
   try {
-    const player = ensurePlayers()[name];
-    // Rewind first: a player still mid-sound ignores play() otherwise.
-    player.seekTo(0);
-    player.play();
+    // Fire-and-forget: each call gets its own instance, so overlapping taps stack.
+    manager.play(name);
   } catch {
     // A dead audio stack should never take the round down with it.
+  }
+}
+
+/** Web equivalent of the native haptic tap — silently absent on desktop. */
+export function buzz(pattern: number | number[]): void {
+  try {
+    navigator.vibrate?.(pattern);
+  } catch {
+    // Ignored on browsers that expose the method but refuse the call.
   }
 }

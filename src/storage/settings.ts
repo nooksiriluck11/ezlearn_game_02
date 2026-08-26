@@ -1,8 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const KEY = '@kukkukkoo/settings-v1';
-/** Pre-rename key — read once so existing players keep their setup. */
-const LEGACY_KEY = '@kukkukku/settings-v1';
+const KEY = 'kukkukkoo/settings-v1';
+/** Keys the Expo build wrote through AsyncStorage — read once so setups survive the port. */
+const LEGACY_KEYS = ['@kukkukkoo/settings-v1', '@kukkukku/settings-v1'];
 
 export const MEMORIZE_CHOICES = [5, 7, 10] as const;
 export const HEART_CHOICES = [3, 4, 5] as const;
@@ -30,16 +28,22 @@ export const DEFAULT_SETTINGS: Settings = {
   sound: true,
 };
 
-export async function loadSettings(): Promise<Settings> {
-  const raw = (await AsyncStorage.getItem(KEY)) ?? (await AsyncStorage.getItem(LEGACY_KEY));
-  if (!raw) return DEFAULT_SETTINGS;
+export function loadSettings(): Settings {
   try {
-    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+    for (const key of [KEY, ...LEGACY_KEYS]) {
+      const raw = localStorage.getItem(key);
+      if (raw) return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+    }
   } catch {
-    return DEFAULT_SETTINGS;
+    // Fall through to defaults.
   }
+  return DEFAULT_SETTINGS;
 }
 
-export async function saveSettings(settings: Settings): Promise<void> {
-  await AsyncStorage.setItem(KEY, JSON.stringify(settings));
+export function saveSettings(settings: Settings): void {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(settings));
+  } catch {
+    // Nothing to do — the run itself is unaffected.
+  }
 }

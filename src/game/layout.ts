@@ -26,7 +26,10 @@ const CHAR_EM = 0.58;
 
 function fitting(cardWidth: number, chars: number, cap: number, floor: number): number {
   const room = cardWidth - 14;
-  return Math.round(Math.max(floor, Math.min(cap, room / (Math.max(3, chars) * CHAR_EM))));
+  // A card squeezed onto a short screen has to be allowed below the nominal
+  // floor, otherwise the word is bigger than the card it sits on.
+  const bottom = Math.min(floor, cardWidth * 0.26);
+  return Math.round(Math.max(bottom, Math.min(cap, room / (Math.max(3, chars) * CHAR_EM))));
 }
 
 /**
@@ -66,4 +69,16 @@ export function boardHeight(count: number, boardWidth: number): number {
   const { height } = cardSize(boardWidth);
   const rows = rowsFor(count).length;
   return rows * height + (rows - 1) * CARD_GAP;
+}
+
+/**
+ * The widest board that still fits in `available` pixels of height. On a short
+ * window the cards shrink instead of spilling into the footer — the inverse of
+ * `boardHeight`, which native never needed because the phone was always tall.
+ */
+export function boardWidthForHeight(count: number, available: number): number {
+  const rows = rowsFor(count).length;
+  const perRow = (available - (rows - 1) * CARD_GAP) / rows;
+  const cardWidth = perRow / CARD_RATIO;
+  return cardWidth * MAX_COLUMNS + CARD_GAP * (MAX_COLUMNS - 1);
 }

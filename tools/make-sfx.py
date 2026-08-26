@@ -15,7 +15,7 @@ import wave
 from pathlib import Path
 
 RATE = 22050
-OUT = Path(__file__).resolve().parent.parent / 'assets' / 'sfx'
+OUT = Path(__file__).resolve().parent.parent / 'public' / 'sfx'
 
 # Notes, C major.
 N = {
